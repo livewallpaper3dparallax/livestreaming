@@ -1,0 +1,40 @@
+name: Stream Video to RTMP
+
+on:
+  workflow_dispatch: # Memungkinkan workflow dijalankan secara manual melalui antarmuka GitHub
+
+jobs:
+  stream:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Checkout repository
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # 2. Install FFmpeg
+    - name: Install FFmpeg
+      run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+    # 3. Setup PHP
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+
+    # 4. Upload video file to the server (optional)
+    - name: Upload video file
+      run: |
+        echo "Simulating video upload..."
+        mkdir -p upload
+        echo "Dummy video content" > upload/sample.mp4
+
+    # 5. Run streaming command
+    - name: Start streaming to RTMP
+      run: |
+        ffmpeg -stream_loop -1 -re -i ./upload/sample.mp4 -c copy -f flv -flush_packets 1 "$RTMP_URL"
+
+    # 6. Log streaming status
+    - name: Log output
+      run: |
+        echo "Streaming started with video: ./upload/sample.mp4"
