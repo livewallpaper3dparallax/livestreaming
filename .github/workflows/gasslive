@@ -1,0 +1,14 @@
+on:
+  workflow_dispatch:
+    inputs:
+      rtmp_url:
+        description: "Enter the RTMP URL for streaming"
+        required: true
+- name: Start streaming to RTMP
+  env:
+    RTMP_URL: ${{ github.event.inputs.rtmp_url }}
+  run: |
+    ffmpeg -stream_loop -1 -re -i ./upload/sample.mp4 -c copy -f flv -flush_packets 1 "$RTMP_URL"
+- name: Start streaming to RTMP
+  run: |
+    ffmpeg -stream_loop -1 -re -i ./upload/sample.mp4 -c copy -f flv -flush_packets 1 "$RTMP_URL" > stream.log 2>&1
